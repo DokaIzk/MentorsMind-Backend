@@ -2,6 +2,24 @@ import * as StellarSdk from '@stellar/stellar-sdk';
 import { env } from './env';
 import config from './index';
 
+/**
+ * Stellar Network Configuration
+ *
+ * Network selection:
+ *   Set `STELLAR_NETWORK=testnet` or `STELLAR_NETWORK=mainnet` in `.env`.
+ *   The Horizon server URL defaults to the public SDF endpoint for the chosen
+ *   network but can be overridden with `STELLAR_HORIZON_URL`.
+ *
+ * Failover:
+ *   `horizonUrls.primary` — used for all calls first.
+ *   `horizonUrls.backup`  — tried when primary is unreachable (after retries).
+ *   To use a custom backup, update the `HORIZON_URLS` map below.
+ *
+ * Platform wallet:
+ *   `PLATFORM_SECRET_KEY` is read on-demand via `getPlatformKeypair()`.
+ *   It is never stored in the exported config object.
+ */
+
 // ---------------------------------------------------------------------------
 // Network constants
 // ---------------------------------------------------------------------------

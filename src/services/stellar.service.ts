@@ -13,13 +13,31 @@ import type {
 const ACCOUNT_CACHE_TTL_MS = 5_000;
 const MAX_RETRIES = 3;
 
+/**
+ * StellarService — wraps @stellar/stellar-sdk for all server-side blockchain ops.
+ *
+ * **Features:**
+ * - Auto testnet/mainnet switching via `STELLAR_NETWORK` env var
+ * - Primary → backup Horizon server failover
+ * - Up to 3 retries with exponential back-off on network timeout
+ * - 5-second TTL in-memory cache on account lookups
+ * - All Horizon API calls logged with latency
+ *
+ * **API:**
+ * - `getAccount(publicKey)` — Fetch account info & balances (cached 5s)
+ * - `submitTransaction(xdr)` — Submit a signed transaction envelope
+ * - `streamPayments(publicKey, handler, cursor?)` — Stream incoming payments (returns close fn)
+ */
 class StellarService {
   private accountCache = new TtlCache<StellarAccountInfo>(ACCOUNT_CACHE_TTL_MS);
 
-  // ---------------------------------------------------------------------------
-  // getAccount
-  // ---------------------------------------------------------------------------
-
+  /**
+   * Fetch account info and balances from the Stellar network.
+   * Results are cached for 5 seconds to reduce Horizon calls.
+   * @param publicKey - Stellar public key (G...)
+   * @returns Account info with balances
+   * @throws On network failure after retries + failover exhausted
+   */
   async getAccount(publicKey: string): Promise<StellarAccountInfo> {
     const cached = this.accountCache.get(publicKey);
     if (cached) {
@@ -36,10 +54,12 @@ class StellarService {
     return info;
   }
 
-  // ---------------------------------------------------------------------------
-  // submitTransaction
-  // ---------------------------------------------------------------------------
-
+  /**
+   * Submit a signed transaction envelope (XDR) to the Stellar network.
+   * @param txEnvelopeXdr - Base64-encoded transaction envelope XDR
+   * @returns Transaction result with hash, ledger, and result XDR
+   * @throws On invalid XDR, network failure, or transaction rejection
+   */
   async submitTransaction(txEnvelopeXdr: string): Promise<StellarTransactionResult> {
     const tx = TransactionBuilder.fromXDR(txEnvelopeXdr, networkPassphrase);
 
@@ -57,10 +77,13 @@ class StellarService {
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // streamPayments
-  // ---------------------------------------------------------------------------
-
+  /**
+   * Stream incoming payment operations for an account.
+   * @param publicKey - Account to watch for payments
+   * @param onPayment - Callback invoked for each incoming payment
+   * @param cursor - Horizon cursor; defaults to 'now' (only future payments)
+   * @returns A close function to stop the stream
+   */
   streamPayments(
     publicKey: string,
     onPayment: PaymentHandler,
