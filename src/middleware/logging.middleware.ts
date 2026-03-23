@@ -1,5 +1,6 @@
 import morgan from 'morgan';
 import { Request, Response } from 'express';
+import config from '../config';
 
 morgan.token('user-id', (req: Request) => {
   const authReq = req as any;
@@ -9,7 +10,6 @@ morgan.token('user-id', (req: Request) => {
 morgan.token('body', (req: Request) => {
   if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
     const body = { ...req.body };
-    // Remove sensitive fields from logs
     if (body.password) body.password = '[REDACTED]';
     if (body.secretKey) body.secretKey = '[REDACTED]';
     if (body.token) body.token = '[REDACTED]';
@@ -18,10 +18,8 @@ morgan.token('body', (req: Request) => {
   return '';
 });
 
-const isDevelopment = process.env.NODE_ENV === 'development';
-
 export const requestLogger = morgan(
-  isDevelopment
+  config.isDevelopment
     ? ':method :url :status :response-time ms - :user-id :body'
     : ':remote-addr - :user-id [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"'
 );
@@ -43,7 +41,7 @@ export const customLogger = (req: Request, res: Response, next: Function): void 
 
     if (res.statusCode >= 400) {
       console.error('Request Error:', logData);
-    } else if (isDevelopment) {
+    } else if (config.isDevelopment) {
       console.log('Request:', logData);
     }
   });

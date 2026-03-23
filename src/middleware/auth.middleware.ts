@@ -1,5 +1,6 @@
 import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import config from '../config';
 import { AuthenticatedRequest } from '../types/api.types';
 import { ResponseUtil } from '../utils/response.utils';
 
@@ -17,13 +18,7 @@ export const authenticate = async (
     }
 
     const token = authHeader.substring(7);
-    const jwtSecret = process.env.JWT_SECRET;
-
-    if (!jwtSecret) {
-      throw new Error('JWT_SECRET is not configured');
-    }
-
-    const decoded = jwt.verify(token, jwtSecret) as any;
+    const decoded = jwt.verify(token, config.jwt.secret) as any;
 
     req.user = {
       id: decoded.id,

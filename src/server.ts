@@ -1,12 +1,9 @@
-import dotenv from 'dotenv';
+// Config must be imported first — validates env vars before anything else loads
+import config from './config';
 import app from './app';
 
-// Load environment variables
-dotenv.config();
-
-const PORT = process.env.PORT || 5000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const API_VERSION = process.env.API_VERSION || 'v1';
+const { port: PORT, apiVersion: API_VERSION } = config.server;
+const NODE_ENV = config.env;
 
 // Start server
 const server = app.listen(PORT, () => {
