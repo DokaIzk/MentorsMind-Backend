@@ -14,6 +14,9 @@ Backend API server for the MentorMinds Stellar platform, built with Node.js, Exp
 - **Logging** with Morgan
 - **Environment Configuration** with dotenv
 - **Interactive API Docs** with Swagger UI (OpenAPI 3.0)
+- **Video Meeting Integration** with multiple provider support (Daily.co, Whereby, Zoom, Jitsi)
+- **Automated Meeting Room Generation** on booking confirmation
+- **Email Notifications** for meeting links
 
 ## 📖 API Documentation
 
@@ -123,6 +126,8 @@ GET /api/v1
 - `GET /api/v1/users/:id` - Get user profile
 - `GET /api/v1/mentors` - List mentors
 - `POST /api/v1/bookings` - Create booking
+- `POST /api/v1/bookings/:id/confirm` - Confirm booking with auto-generated meeting URL
+- `GET /api/v1/bookings` - List user sessions with meeting links
 - `POST /api/v1/payments` - Process payment
 - `GET /api/v1/wallets/:id` - Get wallet info
 
@@ -139,6 +144,18 @@ GET /api/v1
 | `CORS_ORIGIN` | Allowed CORS origins | * |
 
 See `.env.example` for complete list.
+
+### Meeting Provider Configuration
+
+For video meeting functionality, add these variables:
+
+```bash
+MEETING_PROVIDER=jitsi          # Options: daily, whereby, zoom, jitsi
+MEETING_API_KEY=your_api_key    # Required for Daily, Whereby, Zoom
+MEETING_ROOM_EXPIRY_MINUTES=30   # Meeting expires 30 min after session end
+```
+
+📖 **See [Meeting Providers Guide](docs/meeting-providers.md) for detailed setup instructions.**
 
 ## 🧪 Testing
 

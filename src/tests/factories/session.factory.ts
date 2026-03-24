@@ -1,5 +1,4 @@
 import { testPool } from '../setup';
-import { UserRecord } from './user.factory';
 
 export interface SessionFactoryOptions {
   mentorId?: string;
