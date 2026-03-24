@@ -1,6 +1,12 @@
 // Config must be imported first — validates env vars before anything else loads
 import config from './config';
 import app from './app';
+import { initializeModels } from './models';
+
+// Initialize database tables
+initializeModels().catch(err => {
+  console.error('Failed to initialize models:', err);
+});
 
 const { port: PORT, apiVersion: API_VERSION } = config.server;
 const NODE_ENV = config.env;
