@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { ResponseUtil } from '../utils/response.utils';
 import authRoutes from './auth.routes';
 import usersRoutes from './users.routes';
+import exportRoutes from './export.routes';
 import adminRoutes from './admin.routes';
 import bookingsRoutes from './bookings.routes';
 import timezoneRoutes from './timezone.routes';
@@ -17,6 +18,7 @@ AdminService.initialize().catch(err => {
 // Mount route modules
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
+router.use('/', exportRoutes);
 router.use('/admin', adminRoutes);
 router.use('/bookings', bookingsRoutes);
 router.use('/timezones', timezoneRoutes);

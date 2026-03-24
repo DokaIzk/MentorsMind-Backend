@@ -26,8 +26,11 @@
   "type": "commonjs",
   "dependencies": {
     "@stellar/stellar-sdk": "^14.5.0",
+    "@types/archiver": "^7.0.0",
+    "archiver": "^7.0.1",
     "axios": "^1.13.6",
     "bcryptjs": "^3.0.3",
+    "bullmq": "^5.71.0",
     "cors": "^2.8.6",
     "cron": "^3.1.7",
     "dotenv": "^17.3.1",
